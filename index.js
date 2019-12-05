@@ -6,10 +6,10 @@ const path = require('path')
 const multer = require('multer')
 const MG = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
-
+const PORT = process.env.PORT || 5000
 
 const app = express()
-const port = 3001
+
 
 const upload = multer({dest: __dirname + '/uploads/images'});
 const router = express.Router();
@@ -39,7 +39,7 @@ MG.connect(dbs.host, (err, database) => {
   db = database.db(dbs.main)
 
   // Init server
-  app.listen(port)
+  app.listen(PORT)
 })
 
 app.get('/connection', (req, res) => {
