@@ -11,7 +11,7 @@ const ObjectID = require('mongodb').ObjectID
 const app = express()
 const port = 3001
 
-const upload = multer({dest: '/uploads/images'});
+const upload = multer({dest: __dirname + '/uploads/images'});
 const router = express.Router();
 
 // Express configurations
@@ -44,6 +44,10 @@ MG.connect(dbs.host, (err, database) => {
 
 app.get('/connection', (req, res) => {
   res.send({status: 200})
+})
+
+app.get('/dirname', (req, res) => {
+	res.send(__dirname)
 })
 
 app.get('/getCommentaries', (req, res) => {
@@ -83,7 +87,7 @@ app.post('/modifyUserImage', upload.single('image'), (req, res) => {
   try {
     if (req.file) {
       let fileName = req.body.username + '.png'
-      let pathName = './public/user_images/' + fileName
+      let pathName = __dirname + '/public/user_images/' + fileName
       fs.rename(req.file.path, pathName, err => {
         if (err) res.send({err: err})
         db.collection(dbs.users).updateOne({username: req.body.username}, {$set: {image: fileName}})
@@ -102,7 +106,7 @@ app.post('/insertPost', upload.single('image'), (req, res) => {
   try {
     if (req.file) {
       var fileName = req.file.filename + '.png'
-      var pathName = './public/post_images/' + fileName
+      var pathName = __dirname + '/public/post_images/' + fileName
       fs.rename(req.file.path, pathName, err => {
         if (err) res.send({err: err})
         db.collection(dbs.posts).insertOne({...req.body, image: fileName})
