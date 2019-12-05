@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "node index.js"
   },
   "keywords": [
     "mynode"
@@ -20,5 +20,10 @@
     "express": "^4.17.1",
     "mongodb": "^3.3.5",
     "multer": "^1.4.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ggmorais/rw-api"
+  },
+  "license": "MIT"
 }
