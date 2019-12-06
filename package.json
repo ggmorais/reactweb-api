@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "mynode"
   ],
   "author": "gmorais",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "nodemon": "^1.19.4"
   },
@@ -24,6 +25,5 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/ggmorais/rw-api"
-  },
-  "license": "MIT"
+  }
 }
