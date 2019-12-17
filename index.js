@@ -20,7 +20,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false, parameterLimit: 1000000}))
 
 
-// Url acessible folder
+// URL acessible folder
 app.use('/public', express.static('public'))
 
 
@@ -76,9 +76,9 @@ app.post('/insertCommentary', (req, res) => {
 })
 
 app.get('/getPosts', (req, res) => {
+  console.log('Receiving request');
   db.collection(dbs.posts).find(req.query.find).limit(parseInt(req.query.limit)).sort({_id: -1}).toArray((e, r) => {
-    // res.send({data: [{a: 123}, {b: 321}, {c: 444}]})
-    res.send(r)
+    res.send(r);
   })
 })
 
@@ -101,7 +101,12 @@ app.post('/modifyUserImage', upload.single('image'), (req, res) => {
   }
 })
 
-
+/**
+ * @POST
+ * @upload image
+ * @str body
+ * @str date
+ */
 app.post('/insertPost', upload.single('image'), (req, res) => {
   try {
     if (req.file) {
@@ -121,6 +126,10 @@ app.post('/insertPost', upload.single('image'), (req, res) => {
 })
 
 
+/**
+ * @POST
+ * @int _id
+ */
 app.post('/deletePost', (req, res) => {
   try {
     db.collection(dbs.posts).remove({_id: ObjectID(req.body._id)})
@@ -130,65 +139,98 @@ app.post('/deletePost', (req, res) => {
   }
 })
 
+
+/**
+ * @POST
+ * @any
+ */
 app.post('/getUsers', (req, res) => {
   db.collection(dbs.users).find(req.body).toArray((e, r) => {
     res.send({e, r})
   })
 })
 
+
+/**
+ * @POST
+ * @str username
+ * @str email
+ * @str password
+ * @str firstName
+ * @str lastName
+ */
 app.post('/insertUser', (req, res) => {
+  console.log('inserindo user')
   db.collection(dbs.users).find({ $or: [{ email: req.body.email }, { username: req.body.username }] }).toArray((e, r) => {
     if (r.length > 0)
       res.send({ err: 'Email or username already in use.' })
-    else
+    else {
       db.collection(dbs.users).insertOne(req.body)
+      res.send({ done: true })
+    }
   })
 
 })
 
+
+/**
+ * @POST
+ * @int id
+ * @int type (-1 ~ 1)
+ * @str username
+ */
 app.post('/insertLikes', (req, res) => {
-  // post id
-  // username
-  // like -1 ~ 1
-
-  var {_id, type, username} = req.body;
+  var { _id, type, username } = req.body;
   type = parseInt(type);
-  console.log('type = ' + type)
   db.collection(dbs.posts).findOne({_id: ObjectID(_id)}, (e, r) => {
-    if (type > 0) {
-      db.collection(dbs.posts).updateOne(
-        {_id: ObjectID(_id)},
-        {$pull: {dislikeList: username}}
-      );
-      db.collection(dbs.posts).updateOne(
-        {_id: ObjectID(_id)},
-        {$addToSet: {likeList: username}}
-      );
-      console.log('Likeeeeeeee')
-    }
-    if (type < 0) {
-      db.collection(dbs.posts).updateOne(
-        {_id: ObjectID(_id)},
-        {$pull: {likeList: username}}
-      );
-      db.collection(dbs.posts).updateOne(
-        {_id: ObjectID(_id)},
-        {$addToSet: {dislikeList: username}}
-      );
-    } else if (type === 0) {
-      db.collection(dbs.posts).updateOne(
-        {_id: ObjectID(_id)},
-        {$pull: {likeList: username, dislikeList: username}}
-      );
-    }
-  });
+    try {
+      if (type > 0) {
+        db.collection(dbs.posts).updateOne(
+          {_id: ObjectID(_id)},
+          {$pull: {dislikeList: username}}
+        );
+        db.collection(dbs.posts).updateOne(
+          {_id: ObjectID(_id)},
+          {$addToSet: {likeList: username}}
+        );
+  
+      }
+      if (type < 0) {
+        db.collection(dbs.posts).updateOne(
+          {_id: ObjectID(_id)},
+          {$pull: {likeList: username}}
+        );
+        db.collection(dbs.posts).updateOne(
+          {_id: ObjectID(_id)},
+          {$addToSet: {dislikeList: username}}
+        );
+      } 
+      if (type === 0) {
+        db.collection(dbs.posts).updateOne(
+          {_id: ObjectID(_id)},
+          {$pull: {likeList: username, dislikeList: username}}
+        );
+      }
 
+      res.send({done: true});
+    } catch(err) {
+      res.send({done: false, err: err});
+    }
+    
+  });
 })
 
 
+
+/**
+ * @POST
+ * @str username
+ * @str password
+ */
 app.post('/login', (req, res) => {
   db.collection(dbs.users).find(req.body).toArray((e, r) => {
     res.send({e, r})
   })
 })
+
 
