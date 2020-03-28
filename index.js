@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config()
 const cors = require('cors')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -26,7 +27,7 @@ app.use('/public', express.static('public'))
 
 // Database settings
 const dbs = {
-  host: 'mongodb+srv://root:gm14022001@mongo-db-cekcg.mongodb.net/test?retryWrites=true&w=majority',
+  host: 'mongodb+srv://root:' + process.env.MONGODB_PW + '@mongo-db-cekcg.mongodb.net/test?retryWrites=true&w=majority',
   main: 'react',
   users: 'users',
   posts: 'posts'
